@@ -1,364 +1,377 @@
 <!DOCTYPE html>
-
-
-
 <html lang="en">
-
 <head>
-
-<meta charset="utf-8" />
-
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<meta name="theme-color" content="#000000" />
-
-<title>RayBOT Trained Assistant</title>
-
-<style>
-
-  :root {
-
-    --bg: #121212;
-
-    --surface: #1e1e1e;
-
-    --border: #333;
-
-    --text: #fff;
-
-    --muted: #9a9a9a;
-
-    --user: #00ff66;
-
-    --bot: #00aaff;
-
-    --danger: #ff5c5c;
-
-  }
-
-  * { box-sizing: border-box; }
-
-  body {
-
-    margin: 0;
-
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-
-    background: var(--bg);
-
-    color: var(--text);
-
-    display: flex;
-
-    flex-direction: column;
-
-    height: 100dvh;
-
-  }
-
-  header {
-
-    background: var(--surface);
-
-    padding: 0.9rem 1rem;
-
-    font-weight: 700;
-
-    border-bottom: 1px solid var(--border);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 0.75rem;
-
-  }
-
-  header span { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
-
-  .bar {
-
-    background: var(--surface);
-
-    padding: 0.75rem 1rem;
-
-    display: flex;
-
-    gap: 0.5rem;
-
-    border-bottom: 1px solid var(--border);
-
-    flex-wrap: wrap;
-
-  }
-
-  #trainer { display: none; }
-
-  .bar input, #composer input {
-
-    background: var(--bg);
-
-    color: var(--text);
-
-    border: 1px solid var(--border);
-
-    border-radius: 8px;
-
-    padding: 0.6rem 0.75rem;
-
-    font: inherit;
-
-    outline: none;
-
-  }
-
-  .bar input:focus, #composer input:focus { border-color: #555; }
-
-  #trainQ, #idInput { flex: 1; min-width: 140px; }
-
-  #trainA, #pwInput { flex: 2; min-width: 180px; }
-
-  button {
-
-    border: none;
-
-    border-radius: 8px;
-
-    padding: 0.6rem 1rem;
-
-    background: #2a2a2a;
-
-    color: var(--text);
-
-    font: inherit;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-  }
-
-  button:hover { background: #3a3a3a; }
-
-  button.danger { color: var(--danger); }
-
-  #status { color: var(--danger); font-size: 0.85rem; align-self: center; }
-
-  #pairs {
-
-    display: none;
-
-    background: #181818;
-
-    border-bottom: 1px solid var(--border);
-
-    max-height: 140px;
-
-    overflow-y: auto;
-
-    padding: 0.5rem 1rem;
-
-    font-size: 0.85rem;
-
-  }
-
-  .pair {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    gap: 0.75rem;
-
-    padding: 0.35rem 0;
-
-    border-bottom: 1px solid #2a2a2a;
-
-  }
-
-  .pair b { color: var(--user); }
-
-  #chat {
-
-    flex: 1;
-
-    padding: 1rem;
-
-    overflow-y: auto;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 0.75rem;
-
-  }
-
-  .msg {
-
-    padding: 0.75rem 1rem;
-
-    border-radius: 12px;
-
-    max-width: min(80%, 640px);
-
-    line-height: 1.45;
-
-    white-space: pre-wrap;
-
-    overflow-wrap: anywhere;
-
-  }
-
-  .user { align-self: flex-end; background: #262626; color: var(--user); }
-
-  .bot { align-self: flex-start; background: var(--surface); color: var(--bot); }
-
-  #composer {
-
-    display: flex;
-
-    gap: 0.5rem;
-
-    padding: 0.75rem;
-
-    border-top: 1px solid var(--border);
-
-    background: var(--surface);
-
-  }
-
-  #composer input { flex: 1; }
-
-</style>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guamcoin Wallet Explorer</title>
+  <style>
+    :root {
+      --bg: #0e1a17;
+      --card: #16302a;
+      --text: #e8f3ee;
+      --muted: #9bb5ab;
+      --line: #2c4a41;
+      --accent: #3ddc97;
+      --warn: #f0c14b;
+    }
+    body { font-family: Arial, sans-serif; padding: 1em; margin: 0; background: var(--bg); color: var(--text); }
+    h1, h2 { margin: 0 0 0.4em; }
+    .tab-menu { display: flex; gap: 8px; margin: 1em 0; flex-wrap: wrap; }
+    .tab-menu button { padding: 8px 12px; font-size: 0.9em; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 6px; }
+    .tab-menu button.active { background: #1f4d3e; border-color: var(--accent); font-weight: bold; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    input, textarea { margin-bottom: 0.8em; width: 100%; padding: 0.6em; font-size: 1em; box-sizing: border-box; background: #10241f; color: var(--text); border: 1px solid var(--line); border-radius: 6px; }
+    ul.numberList { list-style: none; padding: 0; margin: 0; }
+    ul.numberList li { padding: 8px 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; border-bottom: 1px solid var(--line); }
+    .coins { color: var(--accent); font-weight: bold; margin-right: 10px; }
+    .status { margin-left: 10px; font-style: italic; color: var(--warn); }
+    .history { display: block; color: var(--muted); font-size: 0.8em; margin-top: 4px; }
+    button { cursor: pointer; }
+    .wallet-actions button, .pagination button, .row button { margin-left: 6px; padding: 4px 8px; font-size: 0.8em; background: #1f4d3e; color: var(--text); border: 1px solid var(--line); border-radius: 6px; }
+    .pagination button { margin: 2px; padding: 5px 10px; font-size: 0.9em; }
+    .note { color: var(--muted); font-size: 0.9em; }
+    #requestBox, #operatorOut { white-space: pre-wrap; background: #10241f; border: 1px solid var(--line); padding: 0.75em; font-size: 0.85em; border-radius: 6px; }
+    .panel { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 1em; margin: 1.2em 0; }
+    .operator { border-color: var(--warn); }
+    .hidden { display: none; }
+  </style>
 </head>
-
 <body>
-
-<header>
-
-  RayBOT Trained Assistant
-
-  <span id="count">0 pairs</span>
-
-</header>
-
-
-
-
-
-<div id="auth" class="bar">
-
-  <input id="idInput" placeholder="Admin ID" autocomplete="username" />
-
-  <input id="pwInput" type="password" placeholder="Password" autocomplete="current-password" />
-
-  <button id="unlockBtn" type="button">Unlock</button>
-
-  <span id="status" role="status"></span>
-
-</div>
-
-
-
-
-
-<div id="trainer" class="bar">
-
-  <input id="trainQ" placeholder="Trigger keyword" />
-
-  <input id="trainA" placeholder="RayBOT response" />
-
-  <button id="saveBtn" type="button">Save</button>
-
-  <button id="lockBtn" type="button" class="danger">Lock</button>
-
-</div>
-
-<div id="pairs"></div>
-
-
-
-
-
-<div id="chat" aria-live="polite"></div>
-
-
-
-
-
-<form id="composer">
-
-  <input id="input" autocomplete="off" placeholder="Type a message..." />
-
-  <button type="submit">Send</button>
-
-</form>
-
-
-
-
-
-<script>
-
-const ADMIN_ID = "admin";
-
-const ADMIN_PW = "raybot";
-
-const STORAGE_KEY = "raybot_kb";
-
-
-
-const auth = document.getElementById("auth");
-
-const trainer = document.getElementById("trainer");
-
-const pairsEl = document.getElementById("pairs");
-
-const statusEl = document.getElementById("status");
-
-const countEl = document.getElementById("count");
-
-const chat = document.getElementById("chat");
-
-const input = document.getElementById("input");
-
-const trainQ = document.getElementById("trainQ");
-
-const trainA = document.getElementById("trainA");
-
-
-
-let knowledge = load();
-
-
-
-function load() {
-
-  try {
-
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-
-    return Array.isArray(data) ? data.filter(x => x && x.q && x.a) : [];
-
-  } catch {
-
-    return [];
-
-  }
-
-}
-
-
-
-function save() {
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(knowledge));
-
-  renderPairs();
-
-}
-
+  <main>
+    <h1>Guamcoin Wallet Explorer</h1>
+    <p class="note" id="storageNote"></p>
+    <p class="note">Clifford is the only operator. Everyone else can request a password or a funds transfer. Nothing changes until the operator applies it. Issues are public, so a request carries a password hash, never the password.</p>
+    <div class="tab-menu" id="tabButtons"></div>
+    <div id="tabContainer"></div>
+
+    <div class="panel">
+      <h2>Latest request to the operator</h2>
+      <pre id="requestBox">No request yet.</pre>
+      <p><button id="copyRequest" type="button">Copy request</button></p>
+    </div>
+
+    <div class="panel operator">
+      <h2>Operator only</h2>
+      <div id="loginBox">
+        <p class="note">Sign in to apply password and transfer requests.</p>
+        <input type="text" id="operatorId" placeholder="Operator id" autocomplete="off" />
+        <input type="password" id="operatorPassword" placeholder="Operator password" autocomplete="off" />
+        <p><button id="operatorLogin" type="button">Sign in</button></p>
+      </div>
+      <div id="applyBox" class="hidden">
+        <p class="note">Signed in as operator. Paste a GitHub token with contents write on this repo. The token stays in this browser tab. It is not saved.</p>
+        <input type="password" id="operatorToken" placeholder="Operator GitHub token" autocomplete="off" />
+        <textarea id="operatorRequest" rows="8" placeholder="Paste a request JSON here, then Apply"></textarea>
+        <p>
+          <button id="applyRequest" type="button">Apply request</button>
+          <button id="loadLatest" type="button">Load latest request</button>
+          <button id="operatorLogout" type="button">Sign out</button>
+        </p>
+      </div>
+      <pre id="operatorOut">Operator signed out.</pre>
+    </div>
+  </main>
+  <script>
+    var OWNER = 'ram133';
+    var REPO = 'guamcoin';
+    var BRANCH = 'main';
+    var OPERATOR = 'Clifford';
+    var OPERATOR_ID = '1';
+    var OPERATOR_PASSWORD = '2';
+    var prefixes = [456, 678, 682, 683, 685, 686, 687, 688, 689, 707, 726, 727, 747, 777, 787, 788, 797, 838, 848, 858, 868, 878, 888, 898, 922, 929, 967, 969, 971, 972, 977, 979, 987, 988, 989, 991, 996, 997, 998, 999];
+    var total = 9999;
+    var perPage = 200;
+    var tabButtonsDiv = document.getElementById('tabButtons');
+    var tabContainer = document.getElementById('tabContainer');
+    var overrides = {};
+    var currentPage = {};
+    var lastRequest = '';
+    var operatorSignedIn = false;
+
+    function rawUrl(prefix) {
+      return 'https://raw.githubusercontent.com/' + OWNER + '/' + REPO + '/' + BRANCH + '/balances/' + prefix + '.json?t=' + Date.now();
+    }
+    function apiUrl(prefix) {
+      return 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/balances/' + prefix + '.json';
+    }
+    function phoneAt(prefix, index) {
+      return String(671) + String(prefix) + ('0000' + index).slice(-4);
+    }
+    function prefixOf(phone) {
+      return phone.slice(3, 6);
+    }
+    function entryAt(prefix, index) {
+      var phone = phoneAt(prefix, index);
+      var saved = overrides[prefix][phone];
+      return {
+        phone: phone,
+        coins: saved ? saved.coins : 100,
+        status: saved ? saved.status : 'active',
+        history: saved && saved.history ? saved.history : [],
+        hasPassword: !!(saved && saved.passHash)
+      };
+    }
+    function hashPassword(password) {
+      var bytes = new TextEncoder().encode(password);
+      return crypto.subtle.digest('SHA-256', bytes).then(function (buf) {
+        return Array.from(new Uint8Array(buf)).map(function (b) {
+          return ('0' + b.toString(16)).slice(-2);
+        }).join('');
+      });
+    }
+    function loadOverrides(prefix, done) {
+      fetch(rawUrl(prefix))
+        .then(function (r) { return r.ok ? r.json() : {}; })
+        .then(function (data) { done(data || {}); })
+        .catch(function () { done({}); });
+    }
+    function createTab(prefix) {
+      var btn = document.createElement('button');
+      btn.textContent = prefix;
+      btn.setAttribute('data-prefix', prefix);
+      tabButtonsDiv.appendChild(btn);
+      var wrapper = document.createElement('div');
+      wrapper.className = 'tab-content';
+      wrapper.id = 'tab-' + prefix;
+      wrapper.innerHTML = '<input type="text" class="searchInput" id="search-' + prefix + '" placeholder="Search ' + prefix + ' numbers..." /><ul class="numberList" id="list-' + prefix + '"></ul><div class="pagination" id="pagination-' + prefix + '"></div>';
+      tabContainer.appendChild(wrapper);
+    }
+    function showTab(activePrefix) {
+      var tabs = document.querySelectorAll('.tab-content');
+      var buttons = document.querySelectorAll('.tab-menu button');
+      var i;
+      for (i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+      for (i = 0; i < buttons.length; i++) buttons[i].classList.remove('active');
+      document.getElementById('tab-' + activePrefix).classList.add('active');
+      for (i = 0; i < buttons.length; i++) {
+        if (buttons[i].textContent == String(activePrefix)) buttons[i].classList.add('active');
+      }
+      renderPage(activePrefix, currentPage[activePrefix] || 1);
+    }
+    function publishRequest(request) {
+      request.operator = OPERATOR;
+      request.note = 'Request only. ' + OPERATOR + ' must apply this before any password or transfer is real.';
+      lastRequest = JSON.stringify(request, null, 2);
+      document.getElementById('requestBox').textContent = lastRequest;
+      document.getElementById('operatorRequest').value = lastRequest;
+      var title = 'Request for ' + OPERATOR + ': ' + request.action + ' ' + request.phone;
+      var url = 'https://github.com/' + OWNER + '/' + REPO + '/issues/new?title=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(lastRequest);
+      window.open(url, '_blank');
+    }
+    function setPassword(prefix, phone) {
+      var existing = overrides[prefix][phone];
+      if (existing && existing.passHash) { alert('This number already has a password. Ask ' + OPERATOR + ' to reset it.'); return; }
+      var password = prompt('Choose a password for ' + phone + '. ' + OPERATOR + ' must apply the request.');
+      if (!password) return;
+      var again = prompt('Repeat the password');
+      if (password !== again) { alert('Passwords did not match.'); return; }
+      hashPassword(password).then(function (passHash) {
+        publishRequest({
+          action: 'set-password',
+          phone: phone,
+          prefix: String(prefix),
+          passHash: passHash,
+          at: new Date().toISOString()
+        });
+      });
+    }
+    function sendCoins(prefix, phone) {
+      var saved = overrides[prefix][phone];
+      if (!saved || !saved.passHash) { alert('Ask ' + OPERATOR + ' to apply a password for this number first.'); return; }
+      if (saved.coins < 10) { alert('Not enough coins.'); return; }
+      var password = prompt('Password for ' + phone);
+      if (!password) return;
+      var dest = prompt('Destination phone, 10 digits starting with 671');
+      if (!dest || dest === phone || dest.slice(0, 3) !== '671' || dest.length !== 10) { alert('Bad destination.'); return; }
+      hashPassword(password).then(function (passHash) {
+        if (passHash !== saved.passHash) { alert('Wrong password.'); return; }
+        publishRequest({
+          action: 'send',
+          phone: phone,
+          prefix: String(prefix),
+          dest: dest,
+          destPrefix: prefixOf(dest),
+          amount: 10,
+          passHash: passHash,
+          at: new Date().toISOString()
+        });
+      });
+    }
+    function matches(phone, filterVal) {
+      return !filterVal || phone.indexOf(filterVal) !== -1;
+    }
+    function renderPage(prefix, page) {
+      currentPage[prefix] = page;
+      var input = document.getElementById('search-' + prefix);
+      var filterVal = input ? input.value : '';
+      var list = document.getElementById('list-' + prefix);
+      list.innerHTML = '';
+      var indexes = [];
+      var i;
+      for (i = 0; i < total; i++) {
+        if (matches(phoneAt(prefix, i), filterVal)) indexes.push(i);
+      }
+      var pages = Math.max(1, Math.ceil(indexes.length / perPage));
+      if (page < 1) page = 1;
+      if (page > pages) page = pages;
+      var sliced = indexes.slice((page - 1) * perPage, page * perPage);
+      for (i = 0; i < sliced.length; i++) {
+        var item = entryAt(prefix, sliced[i]);
+        var last = item.history.length ? item.history[item.history.length - 1] : null;
+        var lastText = last ? '<span class="history">last ' + last.reason + ' ' + last.delta + ' at ' + last.at + '</span>' : '';
+        var li = document.createElement('li');
+        li.innerHTML = '<span>' + item.phone + lastText + '</span><span><span class="coins">(' + item.coins + ' coins)</span><span class="status">' + (item.hasPassword ? 'locked' : 'no password') + '</span><span class="wallet-actions"><button data-action="password" data-phone="' + item.phone + '" data-prefix="' + prefix + '">Request password</button><button data-action="send" data-phone="' + item.phone + '" data-prefix="' + prefix + '">Request transfer 10</button></span></span>';
+        list.appendChild(li);
+      }
+      renderPagination(prefix, indexes.length, page);
+    }
+    function renderPagination(prefix, length, activePage) {
+      var container = document.getElementById('pagination-' + prefix);
+      container.innerHTML = '';
+      var pages = Math.max(1, Math.ceil(length / perPage));
+      var i;
+      for (i = 1; i <= pages; i++) {
+        var btn = document.createElement('button');
+        btn.textContent = i;
+        if (i === activePage) btn.style.fontWeight = 'bold';
+        btn.onclick = (function (n) { return function () { renderPage(prefix, n); }; })(i);
+        container.appendChild(btn);
+      }
+    }
+    function operatorToken() {
+      return document.getElementById('operatorToken').value.trim();
+    }
+    function say(msg) {
+      document.getElementById('operatorOut').textContent = msg;
+    }
+    function setSignedIn(on) {
+      operatorSignedIn = on;
+      document.getElementById('loginBox').className = on ? 'hidden' : '';
+      document.getElementById('applyBox').className = on ? '' : 'hidden';
+      say(on ? 'Signed in as operator id 1.' : 'Operator signed out.');
+    }
+    function signIn() {
+      var id = document.getElementById('operatorId').value;
+      var password = document.getElementById('operatorPassword').value;
+      if (id === OPERATOR_ID && password === OPERATOR_PASSWORD) {
+        setSignedIn(true);
+        return;
+      }
+      say('Wrong id or password.');
+    }
+    function readFile(prefix, key) {
+      return fetch(apiUrl(prefix), { headers: { Authorization: 'Bearer ' + key, Accept: 'application/vnd.github+json' } })
+        .then(function (r) { return r.status === 404 ? { missing: true } : r.json(); });
+    }
+    function writeFile(prefix, key, data, sha, message) {
+      return fetch(apiUrl(prefix), {
+        method: 'PUT',
+        headers: { Authorization: 'Bearer ' + key, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message, content: btoa(unescape(encodeURIComponent(JSON.stringify(data)))), sha: sha, branch: BRANCH })
+      }).then(function (r) {
+        if (!r.ok) throw new Error('GitHub write failed for ' + prefix);
+        return r.json();
+      });
+    }
+    function applyRequest() {
+      if (!operatorSignedIn) { alert('Sign in as operator first. Others can only request.'); return; }
+      var key = operatorToken();
+      if (!key) { alert('Operator GitHub token required to write balances.'); return; }
+      var request;
+      try { request = JSON.parse(document.getElementById('operatorRequest').value); }
+      catch (e) { alert('Request JSON is not valid.'); return; }
+      if (!request || !request.action || !request.phone) { alert('Missing action or phone.'); return; }
+      var prefix = String(request.prefix || prefixOf(request.phone));
+      say('Applying ' + request.action + ' for ' + request.phone + '...');
+      readFile(prefix, key).then(function (file) {
+        var data = {};
+        if (!file.missing && file.content) data = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\n/g, '')))));
+        var row = data[request.phone] || { coins: 100, status: 'active', history: [] };
+        if (!row.history) row.history = [];
+        if (request.action === 'set-password') {
+          if (!request.passHash) throw new Error('Missing passHash');
+          row.passHash = request.passHash;
+          row.status = 'locked';
+          row.history.push({ delta: 0, reason: 'password-set-by-operator', at: new Date().toISOString(), balance: row.coins });
+          data[request.phone] = row;
+          return writeFile(prefix, key, data, file.sha, 'operator set password ' + request.phone).then(function () {
+            overrides[prefix] = data;
+            renderPage(prefix, currentPage[prefix] || 1);
+            say('Password applied by ' + OPERATOR + ' for ' + request.phone + '.');
+          });
+        }
+        if (request.action === 'send') {
+          if (!row.passHash || row.passHash !== request.passHash) throw new Error('Password hash does not match');
+          var amount = Number(request.amount) || 10;
+          if (row.coins < amount) throw new Error('Not enough coins');
+          var destPrefix = String(request.destPrefix || prefixOf(request.dest));
+          row.coins -= amount;
+          row.history.push({ delta: -amount, reason: 'send-to-' + request.dest, at: new Date().toISOString(), balance: row.coins });
+          data[request.phone] = row;
+          return writeFile(prefix, key, data, file.sha, 'operator transfer ' + request.phone + ' -' + amount).then(function () {
+            overrides[prefix] = data;
+            return readFile(destPrefix, key).then(function (destFile) {
+              var destData = {};
+              if (!destFile.missing && destFile.content) destData = JSON.parse(decodeURIComponent(escape(atob(destFile.content.replace(/\n/g, '')))));
+              var destRow = destData[request.dest] || { coins: 100, status: 'active', history: [] };
+              if (!destRow.history) destRow.history = [];
+              destRow.coins += amount;
+              destRow.history.push({ delta: amount, reason: 'receive-from-' + request.phone, at: new Date().toISOString(), balance: destRow.coins });
+              destData[request.dest] = destRow;
+              return writeFile(destPrefix, key, destData, destFile.sha, 'operator transfer ' + request.dest + ' +' + amount).then(function () {
+                overrides[destPrefix] = destData;
+                renderPage(prefix, currentPage[prefix] || 1);
+                if (document.getElementById('tab-' + destPrefix)) renderPage(destPrefix, currentPage[destPrefix] || 1);
+                say('Transfer applied by ' + OPERATOR + ': ' + amount + ' from ' + request.phone + ' to ' + request.dest + '.');
+              });
+            });
+          });
+        }
+        throw new Error('Unknown action');
+      }).catch(function (err) {
+        say('Not applied. ' + (err && err.message ? err.message : 'Check the operator token and request.'));
+      });
+    }
+    function init() {
+      document.getElementById('storageNote').textContent = 'Balances are public in ' + OWNER + '/' + REPO + '. Password and transfer requests go to ' + OPERATOR + '. Only the operator writes balances/*.json.';
+      document.getElementById('copyRequest').onclick = function () {
+        if (!lastRequest) return;
+        navigator.clipboard.writeText(lastRequest);
+      };
+      document.getElementById('loadLatest').onclick = function () {
+        document.getElementById('operatorRequest').value = lastRequest || '';
+      };
+      document.getElementById('applyRequest').onclick = applyRequest;
+      document.getElementById('operatorLogin').onclick = signIn;
+      document.getElementById('operatorLogout').onclick = function () { setSignedIn(false); };
+      var pending = prefixes.length;
+      var p;
+      for (p = 0; p < prefixes.length; p++) {
+        (function (prefix) {
+          createTab(prefix);
+          document.getElementById('search-' + prefix).oninput = function () { renderPage(prefix, 1); };
+          loadOverrides(prefix, function (data) {
+            overrides[prefix] = data;
+            pending -= 1;
+            if (pending === 0) showTab(prefixes[0]);
+          });
+        })(prefixes[p]);
+      }
+      tabButtonsDiv.onclick = function (e) {
+        var t = e.target || e.srcElement;
+        if (t && t.tagName === 'BUTTON') showTab(t.getAttribute('data-prefix'));
+      };
+      tabContainer.onclick = function (e) {
+        var t = e.target || e.srcElement;
+        if (!t || t.tagName !== 'BUTTON') return;
+        var action = t.getAttribute('data-action');
+        if (action === 'password') setPassword(t.getAttribute('data-prefix'), t.getAttribute('data-phone'));
+        if (action === 'send') sendCoins(t.getAttribute('data-prefix'), t.getAttribute('data-phone'));
+      };
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  </script>
+</body>
+</html>
