@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+
+
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="theme-color" content="#000000" />
+
+<title>RayBOT Trained Assistant</title>
+
+<style>
+
+  :root {
+
+    --bg: #121212;
+
+    --surface: #1e1e1e;
+
+    --border: #333;
+
+    --text: #fff;
+
+    --muted: #9a9a9a;
+
+    --user: #00ff66;
+
+    --bot: #00aaff;
+
+    --danger: #ff5c5c;
+
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+
+    margin: 0;
+
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    background: var(--bg);
+
+    color: var(--text);
+
+    display: flex;
+
+    flex-direction: column;
+
+    height: 100dvh;
+
+  }
+
+  header {
+
+    background: var(--surface);
+
+    padding: 0.9rem 1rem;
+
+    font-weight: 700;
+
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 0.75rem;
+
+  }
+
+  header span { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+
+  .bar {
+
+    background: var(--surface);
+
+    padding: 0.75rem 1rem;
+
+    display: flex;
+
+    gap: 0.5rem;
+
+    border-bottom: 1px solid var(--border);
+
+    flex-wrap: wrap;
+
+  }
+
+  #trainer { display: none; }
+
+  .bar input, #composer input {
+
+    background: var(--bg);
+
+    color: var(--text);
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    padding: 0.6rem 0.75rem;
+
+    font: inherit;
+
+    outline: none;
+
+  }
+
+  .bar input:focus, #composer input:focus { border-color: #555; }
+
+  #trainQ, #idInput { flex: 1; min-width: 140px; }
+
+  #trainA, #pwInput { flex: 2; min-width: 180px; }
+
+  button {
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 0.6rem 1rem;
+
+    background: #2a2a2a;
+
+    color: var(--text);
+
+    font: inherit;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+  }
+
+  button:hover { background: #3a3a3a; }
+
+  button.danger { color: var(--danger); }
+
+  #status { color: var(--danger); font-size: 0.85rem; align-self: center; }
+
+  #pairs {
+
+    display: none;
+
+    background: #181818;
+
+    border-bottom: 1px solid var(--border);
+
+    max-height: 140px;
+
+    overflow-y: auto;
+
+    padding: 0.5rem 1rem;
+
+    font-size: 0.85rem;
+
+  }
+
+  .pair {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 0.75rem;
+
+    padding: 0.35rem 0;
+
+    border-bottom: 1px solid #2a2a2a;
+
+  }
+
+  .pair b { color: var(--user); }
+
+  #chat {
+
+    flex: 1;
+
+    padding: 1rem;
+
+    overflow-y: auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.75rem;
+
+  }
+
+  .msg {
+
+    padding: 0.75rem 1rem;
+
+    border-radius: 12px;
+
+    max-width: min(80%, 640px);
+
+    line-height: 1.45;
+
+    white-space: pre-wrap;
+
+    overflow-wrap: anywhere;
+
+  }
+
+  .user { align-self: flex-end; background: #262626; color: var(--user); }
+
+  .bot { align-self: flex-start; background: var(--surface); color: var(--bot); }
+
+  #composer {
+
+    display: flex;
+
+    gap: 0.5rem;
+
+    padding: 0.75rem;
+
+    border-top: 1px solid var(--border);
+
+    background: var(--surface);
+
+  }
+
+  #composer input { flex: 1; }
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+  RayBOT Trained Assistant
+
+  <span id="count">0 pairs</span>
+
+</header>
+
+
+
+
+
+<div id="auth" class="bar">
+
+  <input id="idInput" placeholder="Admin ID" autocomplete="username" />
+
+  <input id="pwInput" type="password" placeholder="Password" autocomplete="current-password" />
+
+  <button id="unlockBtn" type="button">Unlock</button>
+
+  <span id="status" role="status"></span>
+
+</div>
+
+
+
+
+
+<div id="trainer" class="bar">
+
+  <input id="trainQ" placeholder="Trigger keyword" />
+
+  <input id="trainA" placeholder="RayBOT response" />
+
+  <button id="saveBtn" type="button">Save</button>
+
+  <button id="lockBtn" type="button" class="danger">Lock</button>
+
+</div>
+
+<div id="pairs"></div>
+
+
+
+
+
+<div id="chat" aria-live="polite"></div>
+
+
+
+
+
+<form id="composer">
+
+  <input id="input" autocomplete="off" placeholder="Type a message..." />
+
+  <button type="submit">Send</button>
+
+</form>
+
+
+
+
+
+<script>
+
+const ADMIN_ID = "admin";
+
+const ADMIN_PW = "raybot";
+
+const STORAGE_KEY = "raybot_kb";
+
+
+
+const auth = document.getElementById("auth");
+
+const trainer = document.getElementById("trainer");
+
+const pairsEl = document.getElementById("pairs");
+
+const statusEl = document.getElementById("status");
+
+const countEl = document.getElementById("count");
+
+const chat = document.getElementById("chat");
+
+const input = document.getElementById("input");
+
+const trainQ = document.getElementById("trainQ");
+
+const trainA = document.getElementById("trainA");
+
+
+
+let knowledge = load();
+
+
+
+function load() {
+
+  try {
+
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+    return Array.isArray(data) ? data.filter(x => x && x.q && x.a) : [];
+
+  } catch {
+
+    return [];
+
+  }
+
+}
+
+
+
+function save() {
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(knowledge));
+
+  renderPairs();
+
+}
+
