@@ -1,7 +1,334 @@
-The page was dead because the script crashed before any buttons were wired up. The crash was in `escapeHtml`: the quote replacement was turned into invalid JavaScript (`"""`), so Unlock and Send never ran.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#000000" />
+<title>RayBOT Trained Assistant</title>
+<style>
+  :root {
+    --bg: #121212;
+    --surface: #1e1e1e;
+    --border: #333;
+    --text: #fff;
+    --muted: #9a9a9a;
+    --user: #00ff66;
+    --bot: #00aaff;
+    --danger: #ff5c5c;
+    --ok: #7dffb3;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+  header {
+    background: var(--surface);
+    padding: 0.9rem 1rem;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  header span { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+  .bar {
+    background: var(--surface);
+    padding: 0.75rem 1rem;
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .hidden { display: none !important; }
+  .bar input, #composer input {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    font: inherit;
+    outline: none;
+  }
+  .bar input:focus, #composer input:focus { border-color: #555; }
+  #trainQ, #idInput { flex: 1; min-width: 140px; }
+  #trainA, #pwInput { flex: 2; min-width: 180px; }
+  button {
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    background: #2a2a2a;
+    color: var(--text);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button:hover { background: #3a3a3a; }
+  button.danger { color: var(--danger); }
+  #status { font-size: 0.85rem; align-self: center; }
+  #status.bad { color: var(--danger); }
+  #status.ok { color: var(--ok); }
+  #pairs {
+    display: none;
+    background: #181818;
+    border-bottom: 1px solid var(--border);
+    max-height: 140px;
+    overflow-y: auto;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  .pair {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .pair b { color: var(--user); }
+  .pair button { padding: 0.25rem 0.6rem; font-size: 0.8rem; }
+  #chat {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .msg {
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    max-width: min(80%, 640px);
+    line-height: 1.45;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .user { align-self: flex-end; background: #262626; color: var(--user); }
+  .bot { align-self: flex-start; background: var(--surface); color: var(--bot); }
+  #composer {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+  #composer input { flex: 1; }
+</style>
+</head>
+<body>
+<header>
+  RayBOT Trained Assistant
+  <span id="count">0 pairs</span>
+</header>
 
-That function is gone. Pair text is now written with normal DOM calls, the status line stays visible after unlock, and chat answers `hello` and `help` even before you train anything.
+<div id="auth" class="bar">
+  <input id="idInput" placeholder="Admin ID" autocomplete="username" />
+  <input id="pwInput" type="password" placeholder="Password" autocomplete="current-password" />
+  <button id="unlockBtn" type="button">Unlock</button>
+</div>
 
-Checked in a browser: ID `1` and password `2` unlock the trainer, saving `pizza` → `I love pizza.` works, and typing `do you like pizza` returns that response.
+<div id="trainer" class="bar hidden">
+  <input id="trainQ" placeholder="Trigger keyword" />
+  <input id="trainA" placeholder="RayBOT response" />
+  <button id="saveBtn" type="button">Save</button>
+  <button id="lockBtn" type="button" class="danger">Lock</button>
+</div>
+<div id="status" class="bar" role="status">Admin ID 1, password 2. Chat works before you unlock.</div>
+<div id="pairs"></div>
+<div id="chat" aria-live="polite"></div>
 
-Open the file in a browser (double-click it, or use Open File). Do not paste it into a preview that only shows the markup.
+<form id="composer">
+  <input id="input" autocomplete="off" placeholder="Type a message..." />
+  <button id="sendBtn" type="button">Send</button>
+</form>
+
+<script>
+(function () {
+  var ADMIN_ID = "1";
+  var ADMIN_PW = "2";
+  var STORAGE_KEY = "raybot_kb";
+
+  var auth = document.getElementById("auth");
+  var trainer = document.getElementById("trainer");
+  var pairsEl = document.getElementById("pairs");
+  var statusEl = document.getElementById("status");
+  var countEl = document.getElementById("count");
+  var chat = document.getElementById("chat");
+  var input = document.getElementById("input");
+  var trainQ = document.getElementById("trainQ");
+  var trainA = document.getElementById("trainA");
+
+  var knowledge = load();
+  var unlocked = false;
+
+  function setStatus(text, kind) {
+    statusEl.textContent = text;
+    statusEl.className = "bar " + (kind || "");
+  }
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      var data = JSON.parse(raw);
+      if (!Array.isArray(data)) return [];
+      return data.filter(function (x) { return x && x.q && x.a; });
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(knowledge));
+    } catch (err) {
+      setStatus("Could not save in this browser. Pairs last until refresh.", "bad");
+    }
+    renderPairs();
+  }
+
+  function renderPairs() {
+    countEl.textContent = knowledge.length + (knowledge.length === 1 ? " pair" : " pairs");
+    pairsEl.innerHTML = "";
+    if (!unlocked) {
+      pairsEl.style.display = "none";
+      return;
+    }
+    pairsEl.style.display = knowledge.length ? "block" : "none";
+    knowledge.forEach(function (item, i) {
+      var row = document.createElement("div");
+      row.className = "pair";
+      var label = document.createElement("span");
+      var strong = document.createElement("b");
+      strong.textContent = item.q;
+      label.appendChild(strong);
+      label.appendChild(document.createTextNode(" -> " + item.a));
+      var del = document.createElement("button");
+      del.type = "button";
+      del.textContent = "Delete";
+      del.setAttribute("data-i", String(i));
+      row.appendChild(label);
+      row.appendChild(del);
+      pairsEl.appendChild(row);
+    });
+  }
+
+  function addMessage(text, who) {
+    var el = document.createElement("div");
+    el.className = "msg " + who;
+    el.textContent = text;
+    chat.appendChild(el);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function replyTo(text) {
+    var q = String(text || "").trim().toLowerCase();
+    if (!q) return "Type a message first.";
+    var best = null;
+    var i;
+    for (i = 0; i < knowledge.length; i++) {
+      var trigger = String(knowledge[i].q).trim().toLowerCase();
+      if (!trigger) continue;
+      if (q === trigger || q.indexOf(trigger) !== -1) {
+        if (!best || trigger.length > best.len) best = { len: trigger.length, a: knowledge[i].a };
+      }
+    }
+    if (best) return best.a;
+    if (q.indexOf("hello") !== -1 || q === "hi" || q.indexOf("hi ") === 0) {
+      return "Hello. I am RayBOT. Unlock with admin ID 1 and password 2 to train me.";
+    }
+    if (q.indexOf("help") !== -1) {
+      return "Unlock with ID 1 and password 2, save a trigger and a response, then mention that trigger in chat.";
+    }
+    return "I do not have a trained response for that yet. Unlock and save a trigger that appears in the message.";
+  }
+
+  function unlock() {
+    var id = document.getElementById("idInput").value.trim();
+    var pw = document.getElementById("pwInput").value;
+    if (id === ADMIN_ID && pw === ADMIN_PW) {
+      unlocked = true;
+      auth.classList.add("hidden");
+      trainer.classList.remove("hidden");
+      setStatus("Unlocked. Save a trigger and a response.", "ok");
+      renderPairs();
+      trainQ.focus();
+    } else {
+      setStatus("Wrong admin ID or password. Use 1 and 2.", "bad");
+    }
+  }
+
+  function lock() {
+    unlocked = false;
+    trainer.classList.add("hidden");
+    auth.classList.remove("hidden");
+    document.getElementById("pwInput").value = "";
+    setStatus("Locked.", "ok");
+    renderPairs();
+  }
+
+  function savePair() {
+    var q = trainQ.value.trim();
+    var a = trainA.value.trim();
+    if (!q || !a) {
+      setStatus("Need both a trigger and a response.", "bad");
+      return;
+    }
+    var existing = -1;
+    var i;
+    for (i = 0; i < knowledge.length; i++) {
+      if (String(knowledge[i].q).toLowerCase() === q.toLowerCase()) existing = i;
+    }
+    if (existing >= 0) knowledge[existing] = { q: q, a: a };
+    else knowledge.push({ q: q, a: a });
+    save();
+    trainQ.value = "";
+    trainA.value = "";
+    setStatus("Saved trigger: " + q, "ok");
+    trainQ.focus();
+  }
+
+  function sendMessage() {
+    var text = input.value.trim();
+    if (!text) return;
+    addMessage(text, "user");
+    input.value = "";
+    addMessage(replyTo(text), "bot");
+  }
+
+  document.getElementById("unlockBtn").onclick = unlock;
+  document.getElementById("saveBtn").onclick = savePair;
+  document.getElementById("lockBtn").onclick = lock;
+  document.getElementById("sendBtn").onclick = sendMessage;
+  document.getElementById("composer").onsubmit = function (e) {
+    e.preventDefault();
+    sendMessage();
+    return false;
+  };
+  document.getElementById("pwInput").onkeydown = function (e) {
+    if (e.key === "Enter") unlock();
+  };
+  document.getElementById("idInput").onkeydown = function (e) {
+    if (e.key === "Enter") unlock();
+  };
+  pairsEl.onclick = function (e) {
+    var btn = e.target;
+    if (!btn || !btn.getAttribute || !unlocked) return;
+    var index = btn.getAttribute("data-i");
+    if (index === null) return;
+    knowledge.splice(Number(index), 1);
+    save();
+    setStatus("Deleted.", "ok");
+  };
+
+  renderPairs();
+  addMessage("RayBOT ready. Type hello, or unlock with ID 1 and password 2 to train a trigger.", "bot");
+})();
+</script>
+</body>
+</html>
