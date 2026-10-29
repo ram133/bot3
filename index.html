@@ -1,334 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#000000" />
-<title>RayBOT Trained Assistant</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ram133 · All Repositories</title>
 <style>
-  :root {
-    --bg: #121212;
-    --surface: #1e1e1e;
-    --border: #333;
-    --text: #fff;
-    --muted: #9a9a9a;
-    --user: #00ff66;
-    --bot: #00aaff;
-    --danger: #ff5c5c;
-    --ok: #7dffb3;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-  }
-  header {
-    background: var(--surface);
-    padding: 0.9rem 1rem;
-    font-weight: 700;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
-  header span { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
-  .bar {
-    background: var(--surface);
-    padding: 0.75rem 1rem;
-    display: flex;
-    gap: 0.5rem;
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
-  }
-  .hidden { display: none !important; }
-  .bar input, #composer input {
-    background: var(--bg);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.6rem 0.75rem;
-    font: inherit;
-    outline: none;
-  }
-  .bar input:focus, #composer input:focus { border-color: #555; }
-  #trainQ, #idInput { flex: 1; min-width: 140px; }
-  #trainA, #pwInput { flex: 2; min-width: 180px; }
-  button {
-    border: none;
-    border-radius: 8px;
-    padding: 0.6rem 1rem;
-    background: #2a2a2a;
-    color: var(--text);
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  button:hover { background: #3a3a3a; }
-  button.danger { color: var(--danger); }
-  #status { font-size: 0.85rem; align-self: center; }
-  #status.bad { color: var(--danger); }
-  #status.ok { color: var(--ok); }
-  #pairs {
-    display: none;
-    background: #181818;
-    border-bottom: 1px solid var(--border);
-    max-height: 140px;
-    overflow-y: auto;
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-  }
-  .pair {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.35rem 0;
-    border-bottom: 1px solid #2a2a2a;
-  }
-  .pair b { color: var(--user); }
-  .pair button { padding: 0.25rem 0.6rem; font-size: 0.8rem; }
-  #chat {
-    flex: 1;
-    padding: 1rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .msg {
-    padding: 0.75rem 1rem;
-    border-radius: 12px;
-    max-width: min(80%, 640px);
-    line-height: 1.45;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
-  .user { align-self: flex-end; background: #262626; color: var(--user); }
-  .bot { align-self: flex-start; background: var(--surface); color: var(--bot); }
-  #composer {
-    display: flex;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    border-top: 1px solid var(--border);
-    background: var(--surface);
-  }
-  #composer input { flex: 1; }
+body{font-family:system-ui,sans-serif;background:#0d1117;color:#e6edf3;margin:0;padding:1.5rem;line-height:1.4}
+.container{max-width:800px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:.3rem}
+h1 a{color:#58a6ff;text-decoration:none}
+.sub{color:#8b949e;font-size:.9rem;margin-bottom:1.2rem}
+.count{display:inline-block;background:#161b22;border:1px solid #30363d;border-radius:999px;padding:.2rem .8rem;font-size:.8rem;color:#8b949e}
+ul{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.4rem;margin-top:1.2rem}
+li a{display:block;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:.5rem .7rem;color:#58a6ff;text-decoration:none;font-size:.9rem}
+li a:hover{border-color:#58a6ff}
+footer{margin-top:2rem;font-size:.8rem;color:#8b949e;border-top:1px solid #30363d;padding-top:1rem}
+footer a{color:#58a6ff}
 </style>
 </head>
 <body>
+<div class="container">
 <header>
-  RayBOT Trained Assistant
-  <span id="count">0 pairs</span>
+<h1><a href="https://github.com/ram133">ram133</a> · Repository Index</h1>
+<p class="sub">Clifford Ray Hackett · Guam, USA</p>
+<span class="count">78 repositories</span>
 </header>
-
-<div id="auth" class="bar">
-  <input id="idInput" placeholder="Admin ID" autocomplete="username" />
-  <input id="pwInput" type="password" placeholder="Password" autocomplete="current-password" />
-  <button id="unlockBtn" type="button">Unlock</button>
+<ul>
+      <li><a href="https://github.com/ram133/.github">.github</a></li>
+      <li><a href="https://github.com/ram133/2509">2509</a></li>
+      <li><a href="https://github.com/ram133/5">5</a></li>
+      <li><a href="https://github.com/ram133/ADA">ADA</a></li>
+      <li><a href="https://github.com/ram133/AI">AI</a></li>
+      <li><a href="https://github.com/ram133/AutoGPT">AutoGPT</a></li>
+      <li><a href="https://github.com/ram133/ChatGPT">ChatGPT</a></li>
+      <li><a href="https://github.com/ram133/DOCOMO">DOCOMO</a></li>
+      <li><a href="https://github.com/ram133/GROK">GROK</a></li>
+      <li><a href="https://github.com/ram133/Gemini">Gemini</a></li>
+      <li><a href="https://github.com/ram133/How-to-Make-a-Computer-Operating-System">How-to-Make-a-Computer-Operating-System</a></li>
+      <li><a href="https://github.com/ram133/MAX">MAX</a></li>
+      <li><a href="https://github.com/ram133/NEWS">NEWS</a></li>
+      <li><a href="https://github.com/ram133/PHP-Download-Counter">PHP-Download-Counter</a></li>
+      <li><a href="https://github.com/ram133/Qwen">Qwen</a></li>
+      <li><a href="https://github.com/ram133/Qwen3.8">Qwen3.8</a></li>
+      <li><a href="https://github.com/ram133/Scweet">Scweet</a></li>
+      <li><a href="https://github.com/ram133/XActions">XActions</a></li>
+      <li><a href="https://github.com/ram133/agent">agent</a></li>
+      <li><a href="https://github.com/ram133/agentdb">agentdb</a></li>
+      <li><a href="https://github.com/ram133/api">api</a></li>
+      <li><a href="https://github.com/ram133/api-vault">api-vault</a></li>
+      <li><a href="https://github.com/ram133/apps-script-samples">apps-script-samples</a></li>
+      <li><a href="https://github.com/ram133/asset-store">asset-store</a></li>
+      <li><a href="https://github.com/ram133/audio-presets">audio-presets</a></li>
+      <li><a href="https://github.com/ram133/bot2">bot2</a></li>
+      <li><a href="https://github.com/ram133/bot3">bot3</a></li>
+      <li><a href="https://github.com/ram133/browser-use">browser-use</a></li>
+      <li><a href="https://github.com/ram133/cli">cli</a></li>
+      <li><a href="https://github.com/ram133/code-boilerplates">code-boilerplates</a></li>
+      <li><a href="https://github.com/ram133/coin">coin</a></li>
+      <li><a href="https://github.com/ram133/coin2">coin2</a></li>
+      <li><a href="https://github.com/ram133/coin3">coin3</a></li>
+      <li><a href="https://github.com/ram133/coin4">coin4</a></li>
+      <li><a href="https://github.com/ram133/coin5">coin5</a></li>
+      <li><a href="https://github.com/ram133/cross-post-automation">cross-post-automation</a></li>
+      <li><a href="https://github.com/ram133/design-assets">design-assets</a></li>
+      <li><a href="https://github.com/ram133/devitils">devitils</a></li>
+      <li><a href="https://github.com/ram133/digital_factory">digital_factory</a></li>
+      <li><a href="https://github.com/ram133/eliza">eliza</a></li>
+      <li><a href="https://github.com/ram133/everything-claude-code">everything-claude-code</a></li>
+      <li><a href="https://github.com/ram133/fastgpt-cloud">fastgpt-cloud</a></li>
+      <li><a href="https://github.com/ram133/femtoclaw">femtoclaw</a></li>
+      <li><a href="https://github.com/ram133/gas-microsaas">gas-microsaas</a></li>
+      <li><a href="https://github.com/ram133/guamcoin">guamcoin</a></li>
+      <li><a href="https://github.com/ram133/gyd">gyd</a></li>
+      <li><a href="https://github.com/ram133/jFeed">jFeed</a></li>
+      <li><a href="https://github.com/ram133/jsonframe-cheerio">jsonframe-cheerio</a></li>
+      <li><a href="https://github.com/ram133/langchain">langchain</a></li>
+      <li><a href="https://github.com/ram133/max-git-system">max-git-system</a></li>
+      <li><a href="https://github.com/ram133/mcu_quantum_project">mcu_quantum_project</a></li>
+      <li><a href="https://github.com/ram133/micro-saas-kit">micro-saas-kit</a></li>
+      <li><a href="https://github.com/ram133/nanoGPT">nanoGPT</a></li>
+      <li><a href="https://github.com/ram133/niche-directory">niche-directory</a></li>
+      <li><a href="https://github.com/ram133/nocodb-cloud">nocodb-cloud</a></li>
+      <li><a href="https://github.com/ram133/oh-my-cli">oh-my-cli</a></li>
+      <li><a href="https://github.com/ram133/ollama">ollama</a></li>
+      <li><a href="https://github.com/ram133/open-webui-cloud">open-webui-cloud</a></li>
+      <li><a href="https://github.com/ram133/openclaw">openclaw</a></li>
+      <li><a href="https://github.com/ram133/picoclaw">picoclaw</a></li>
+      <li><a href="https://github.com/ram133/prompt-pack">prompt-pack</a></li>
+      <li><a href="https://github.com/ram133/qwen-code-action">qwen-code-action</a></li>
+      <li><a href="https://github.com/ram133/ram133">ram133</a></li>
+      <li><a href="https://github.com/ram133/raycoin">raycoin</a></li>
+      <li><a href="https://github.com/ram133/rayswallet">rayswallet</a></li>
+      <li><a href="https://github.com/ram133/simple-ipn">simple-ipn</a></li>
+      <li><a href="https://github.com/ram133/site-api">site-api</a></li>
+      <li><a href="https://github.com/ram133/site-assets">site-assets</a></li>
+      <li><a href="https://github.com/ram133/site-core">site-core</a></li>
+      <li><a href="https://github.com/ram133/site-ui">site-ui</a></li>
+      <li><a href="https://github.com/ram133/site-utils">site-utils</a></li>
+      <li><a href="https://github.com/ram133/stable-diffusion-webui">stable-diffusion-webui</a></li>
+      <li><a href="https://github.com/ram133/supabase">supabase</a></li>
+      <li><a href="https://github.com/ram133/template-store">template-store</a></li>
+      <li><a href="https://github.com/ram133/twikit">twikit</a></li>
+      <li><a href="https://github.com/ram133/vuemmerce">vuemmerce</a></li>
+      <li><a href="https://github.com/ram133/web-llm-chat">web-llm-chat</a></li>
+      <li><a href="https://github.com/ram133/x-tweet-scraper">x-tweet-scraper</a></li>
+</ul>
+<footer>
+Updated 2026-10-29 · <a href="https://github.com/ram133/MAX">Canonical index in MAX</a>
+</footer>
 </div>
-
-<div id="trainer" class="bar hidden">
-  <input id="trainQ" placeholder="Trigger keyword" />
-  <input id="trainA" placeholder="RayBOT response" />
-  <button id="saveBtn" type="button">Save</button>
-  <button id="lockBtn" type="button" class="danger">Lock</button>
-</div>
-<div id="status" class="bar" role="status">Admin ID 1, password 2. Chat works before you unlock.</div>
-<div id="pairs"></div>
-<div id="chat" aria-live="polite"></div>
-
-<form id="composer">
-  <input id="input" autocomplete="off" placeholder="Type a message..." />
-  <button id="sendBtn" type="button">Send</button>
-</form>
-
-<script>
-(function () {
-  var ADMIN_ID = "1";
-  var ADMIN_PW = "2";
-  var STORAGE_KEY = "raybot_kb";
-
-  var auth = document.getElementById("auth");
-  var trainer = document.getElementById("trainer");
-  var pairsEl = document.getElementById("pairs");
-  var statusEl = document.getElementById("status");
-  var countEl = document.getElementById("count");
-  var chat = document.getElementById("chat");
-  var input = document.getElementById("input");
-  var trainQ = document.getElementById("trainQ");
-  var trainA = document.getElementById("trainA");
-
-  var knowledge = load();
-  var unlocked = false;
-
-  function setStatus(text, kind) {
-    statusEl.textContent = text;
-    statusEl.className = "bar " + (kind || "");
-  }
-
-  function load() {
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      var data = JSON.parse(raw);
-      if (!Array.isArray(data)) return [];
-      return data.filter(function (x) { return x && x.q && x.a; });
-    } catch (err) {
-      return [];
-    }
-  }
-
-  function save() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(knowledge));
-    } catch (err) {
-      setStatus("Could not save in this browser. Pairs last until refresh.", "bad");
-    }
-    renderPairs();
-  }
-
-  function renderPairs() {
-    countEl.textContent = knowledge.length + (knowledge.length === 1 ? " pair" : " pairs");
-    pairsEl.innerHTML = "";
-    if (!unlocked) {
-      pairsEl.style.display = "none";
-      return;
-    }
-    pairsEl.style.display = knowledge.length ? "block" : "none";
-    knowledge.forEach(function (item, i) {
-      var row = document.createElement("div");
-      row.className = "pair";
-      var label = document.createElement("span");
-      var strong = document.createElement("b");
-      strong.textContent = item.q;
-      label.appendChild(strong);
-      label.appendChild(document.createTextNode(" -> " + item.a));
-      var del = document.createElement("button");
-      del.type = "button";
-      del.textContent = "Delete";
-      del.setAttribute("data-i", String(i));
-      row.appendChild(label);
-      row.appendChild(del);
-      pairsEl.appendChild(row);
-    });
-  }
-
-  function addMessage(text, who) {
-    var el = document.createElement("div");
-    el.className = "msg " + who;
-    el.textContent = text;
-    chat.appendChild(el);
-    chat.scrollTop = chat.scrollHeight;
-  }
-
-  function replyTo(text) {
-    var q = String(text || "").trim().toLowerCase();
-    if (!q) return "Type a message first.";
-    var best = null;
-    var i;
-    for (i = 0; i < knowledge.length; i++) {
-      var trigger = String(knowledge[i].q).trim().toLowerCase();
-      if (!trigger) continue;
-      if (q === trigger || q.indexOf(trigger) !== -1) {
-        if (!best || trigger.length > best.len) best = { len: trigger.length, a: knowledge[i].a };
-      }
-    }
-    if (best) return best.a;
-    if (q.indexOf("hello") !== -1 || q === "hi" || q.indexOf("hi ") === 0) {
-      return "Hello. I am RayBOT. Unlock with admin ID 1 and password 2 to train me.";
-    }
-    if (q.indexOf("help") !== -1) {
-      return "Unlock with ID 1 and password 2, save a trigger and a response, then mention that trigger in chat.";
-    }
-    return "I do not have a trained response for that yet. Unlock and save a trigger that appears in the message.";
-  }
-
-  function unlock() {
-    var id = document.getElementById("idInput").value.trim();
-    var pw = document.getElementById("pwInput").value;
-    if (id === ADMIN_ID && pw === ADMIN_PW) {
-      unlocked = true;
-      auth.classList.add("hidden");
-      trainer.classList.remove("hidden");
-      setStatus("Unlocked. Save a trigger and a response.", "ok");
-      renderPairs();
-      trainQ.focus();
-    } else {
-      setStatus("Wrong admin ID or password. Use 1 and 2.", "bad");
-    }
-  }
-
-  function lock() {
-    unlocked = false;
-    trainer.classList.add("hidden");
-    auth.classList.remove("hidden");
-    document.getElementById("pwInput").value = "";
-    setStatus("Locked.", "ok");
-    renderPairs();
-  }
-
-  function savePair() {
-    var q = trainQ.value.trim();
-    var a = trainA.value.trim();
-    if (!q || !a) {
-      setStatus("Need both a trigger and a response.", "bad");
-      return;
-    }
-    var existing = -1;
-    var i;
-    for (i = 0; i < knowledge.length; i++) {
-      if (String(knowledge[i].q).toLowerCase() === q.toLowerCase()) existing = i;
-    }
-    if (existing >= 0) knowledge[existing] = { q: q, a: a };
-    else knowledge.push({ q: q, a: a });
-    save();
-    trainQ.value = "";
-    trainA.value = "";
-    setStatus("Saved trigger: " + q, "ok");
-    trainQ.focus();
-  }
-
-  function sendMessage() {
-    var text = input.value.trim();
-    if (!text) return;
-    addMessage(text, "user");
-    input.value = "";
-    addMessage(replyTo(text), "bot");
-  }
-
-  document.getElementById("unlockBtn").onclick = unlock;
-  document.getElementById("saveBtn").onclick = savePair;
-  document.getElementById("lockBtn").onclick = lock;
-  document.getElementById("sendBtn").onclick = sendMessage;
-  document.getElementById("composer").onsubmit = function (e) {
-    e.preventDefault();
-    sendMessage();
-    return false;
-  };
-  document.getElementById("pwInput").onkeydown = function (e) {
-    if (e.key === "Enter") unlock();
-  };
-  document.getElementById("idInput").onkeydown = function (e) {
-    if (e.key === "Enter") unlock();
-  };
-  pairsEl.onclick = function (e) {
-    var btn = e.target;
-    if (!btn || !btn.getAttribute || !unlocked) return;
-    var index = btn.getAttribute("data-i");
-    if (index === null) return;
-    knowledge.splice(Number(index), 1);
-    save();
-    setStatus("Deleted.", "ok");
-  };
-
-  renderPairs();
-  addMessage("RayBOT ready. Type hello, or unlock with ID 1 and password 2 to train a trigger.", "bot");
-})();
-</script>
 </body>
 </html>
