@@ -1,176 +1,807 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="en" class="dark">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#000000" />
-<title>RayBOT Trained Assistant</title>
-<style>
-  :root {
-    --bg: #121212;
-    --surface: #1e1e1e;
-    --border: #333;
-    --text: #fff;
-    --muted: #9a9a9a;
-    --user: #00ff66;
-    --bot: #00aaff;
-    --danger: #ff5c5c;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-  }
-  header {
-    background: var(--surface);
-    padding: 0.9rem 1rem;
-    font-weight: 700;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
-  header span { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
-  .bar {
-    background: var(--surface);
-    padding: 0.75rem 1rem;
-    display: flex;
-    gap: 0.5rem;
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
-  }
-  #trainer { display: none; }
-  .bar input, #composer input {
-    background: var(--bg);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.6rem 0.75rem;
-    font: inherit;
-    outline: none;
-  }
-  .bar input:focus, #composer input:focus { border-color: #555; }
-  #trainQ, #idInput { flex: 1; min-width: 140px; }
-  #trainA, #pwInput { flex: 2; min-width: 180px; }
-  button {
-    border: none;
-    border-radius: 8px;
-    padding: 0.6rem 1rem;
-    background: #2a2a2a;
-    color: var(--text);
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  button:hover { background: #3a3a3a; }
-  button.danger { color: var(--danger); }
-  #status { color: var(--danger); font-size: 0.85rem; align-self: center; }
-  #pairs {
-    display: none;
-    background: #181818;
-    border-bottom: 1px solid var(--border);
-    max-height: 140px;
-    overflow-y: auto;
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-  }
-  .pair {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.35rem 0;
-    border-bottom: 1px solid #2a2a2a;
-  }
-  .pair b { color: var(--user); }
-  #chat {
-    flex: 1;
-    padding: 1rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .msg {
-    padding: 0.75rem 1rem;
-    border-radius: 12px;
-    max-width: min(80%, 640px);
-    line-height: 1.45;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
-  .user { align-self: flex-end; background: #262626; color: var(--user); }
-  .bot { align-self: flex-start; background: var(--surface); color: var(--bot); }
-  #composer {
-    display: flex;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    border-top: 1px solid var(--border);
-    background: var(--surface);
-  }
-  #composer input { flex: 1; }
-</style>
+
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta name="theme-color" content="#0d1117" />
+
+  <title>RayBOT Trained Assistant</title>
+
+  
+
+  <!-- Fonts & Icons -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  
+
+  <!-- Tailwind CSS CDN -->
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+
+    tailwind.config = {
+
+      darkMode: 'class',
+
+      theme: {
+
+        extend: {
+
+          fontFamily: {
+
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+
+            mono: ['"JetBrains Mono"', 'monospace'],
+
+          },
+
+          colors: {
+
+            brand: {
+
+              50: '#f0f7ff',
+
+              500: '#00aaff',
+
+              600: '#0088cc',
+
+              glow: 'rgba(0, 170, 255, 0.25)',
+
+            },
+
+            accent: {
+
+              emerald: '#00ff66',
+
+              emeraldGlow: 'rgba(0, 255, 102, 0.2)',
+
+              rose: '#ff5c5c',
+
+            },
+
+            dark: {
+
+              base: '#0b0f17',
+
+              surface: '#151c28',
+
+              card: '#1e2738',
+
+              border: '#2a364f',
+
+            }
+
+          },
+
+          animation: {
+
+            'fade-in': 'fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+
+            'slide-down': 'slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+
+            'pulse-subtle': 'pulseSubtle 2s infinite',
+
+          },
+
+          keyframes: {
+
+            fadeIn: {
+
+              '0%': { opacity: '0', transform: 'translateY(6px)' },
+
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+
+            },
+
+            slideDown: {
+
+              '0%': { opacity: '0', transform: 'translateY(-10px)' },
+
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+
+            },
+
+            pulseSubtle: {
+
+              '0%, 100%': { opacity: '1' },
+
+              '50%': { opacity: '0.5' },
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  </script>
+
+
+
+  <style>
+
+    /* Custom Scrollbars */
+
+    ::-webkit-scrollbar {
+
+      width: 6px;
+
+      height: 6px;
+
+    }
+
+    ::-webkit-scrollbar-track {
+
+      background: rgba(15, 23, 42, 0.6);
+
+    }
+
+    ::-webkit-scrollbar-thumb {
+
+      background: #2a364f;
+
+      border-radius: 9999px;
+
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+
+      background: #3b4d71;
+
+    }
+
+
+
+    /* Glassmorphism utilities */
+
+    .glass-header {
+
+      background: rgba(21, 28, 40, 0.85);
+
+      backdrop-filter: blur(12px);
+
+      -webkit-backdrop-filter: blur(12px);
+
+    }
+
+
+
+    .glass-panel {
+
+      background: rgba(21, 28, 40, 0.65);
+
+      backdrop-filter: blur(8px);
+
+    }
+
+
+
+    /* Subtle neon glows */
+
+    .bot-glow {
+
+      box-shadow: 0 0 15px rgba(0, 170, 255, 0.08);
+
+    }
+
+    .user-glow {
+
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.05);
+
+    }
+
+  </style>
+
 </head>
-<body>
-<header>
-  RayBOT Trained Assistant
-  <span id="count">0 pairs</span>
-</header>
 
-<div id="auth" class="bar">
-  <input id="idInput" placeholder="Admin ID" autocomplete="username" />
-  <input id="pwInput" type="password" placeholder="Password" autocomplete="current-password" />
-  <button id="unlockBtn" type="button">Unlock</button>
-  <span id="status" role="status"></span>
-</div>
+<body class="bg-dark-base text-slate-100 flex flex-col h-screen overflow-hidden font-sans antialiased selection:bg-brand-500/30 selection:text-brand-500">
 
-<div id="trainer" class="bar">
-  <input id="trainQ" placeholder="Trigger keyword" />
-  <input id="trainA" placeholder="RayBOT response" />
-  <button id="saveBtn" type="button">Save</button>
-  <button id="lockBtn" type="button" class="danger">Lock</button>
-</div>
-<div id="pairs"></div>
 
-<div id="chat" aria-live="polite"></div>
 
-<form id="composer">
-  <input id="input" autocomplete="off" placeholder="Type a message..." />
-  <button type="submit">Send</button>
-</form>
+  <!-- APP CONTAINER -->
 
-<script>
-const ADMIN_ID = "admin";
-const ADMIN_PW = "raybot";
-const STORAGE_KEY = "raybot_kb";
+  <div class="flex flex-col h-full w-full max-w-5xl mx-auto shadow-2xl border-x border-dark-border/40 bg-dark-base/50">
 
-const auth = document.getElementById("auth");
-const trainer = document.getElementById("trainer");
-const pairsEl = document.getElementById("pairs");
-const statusEl = document.getElementById("status");
-const countEl = document.getElementById("count");
-const chat = document.getElementById("chat");
-const input = document.getElementById("input");
-const trainQ = document.getElementById("trainQ");
-const trainA = document.getElementById("trainA");
 
-let knowledge = load();
 
-function load() {
-  try {
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    return Array.isArray(data) ? data.filter(x => x && x.q && x.a) : [];
-  } catch {
-    return [];
-  }
-}
+    <!-- HEADER -->
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(knowledge));
-  renderPairs();
-}
+    <header class="glass-header z-20 px-5 py-3.5 border-b border-dark-border flex items-center justify-between gap-4 sticky top-0">
+
+      <div class="flex items-center gap-3">
+
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-500 flex items-center justify-center text-white shadow-lg shadow-brand-glow">
+
+          <i data-lucide="bot" class="w-5 h-5"></i>
+
+        </div>
+
+        <div>
+
+          <h1 class="font-bold text-base tracking-tight text-white flex items-center gap-2">
+
+            RayBOT
+
+            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-500 border border-brand-500/20">Assistant</span>
+
+          </h1>
+
+          <p class="text-xs text-slate-400">Knowledge-trained dynamic assistant</p>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="flex items-center gap-3">
+
+        <span id="count" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-dark-card border border-dark-border text-slate-300 shadow-inner">
+
+          <span class="w-2 h-2 rounded-full bg-accent-emerald animate-pulse"></span>
+
+          0 pairs
+
+        </span>
+
+      </div>
+
+    </header>
+
+
+
+    <!-- ADMIN AUTH BAR -->
+
+    <div id="auth" class="bar glass-panel px-5 py-3 border-b border-dark-border flex flex-wrap items-center gap-3 animate-slide-down">
+
+      <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mr-1">
+
+        <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
+
+        <span>Admin Access</span>
+
+      </div>
+
+      <div class="flex flex-1 flex-wrap items-center gap-2.5 min-w-[280px]">
+
+        <div class="relative flex-1 min-w-[140px]">
+
+          <input id="idInput" placeholder="Admin ID" autocomplete="username" class="w-full bg-dark-card text-white border border-dark-border rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all placeholder:text-slate-500" />
+
+        </div>
+
+        <div class="relative flex-2 min-w-[180px]">
+
+          <input id="pwInput" type="password" placeholder="Password" autocomplete="current-password" class="w-full bg-dark-card text-white border border-dark-border rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all placeholder:text-slate-500" />
+
+        </div>
+
+        <button id="unlockBtn" type="button" class="inline-flex items-center justify-center gap-1.5 bg-brand-500 hover:bg-brand-600 active:scale-[0.98] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all shadow-md shadow-brand-glow">
+
+          <span>Unlock</span>
+
+          <i data-lucide="key-round" class="w-4 h-4"></i>
+
+        </button>
+
+      </div>
+
+      <span id="status" role="status" class="text-xs font-medium text-accent-rose px-2 py-1 rounded bg-accent-rose/10 border border-accent-rose/20 hidden"></span>
+
+    </div>
+
+
+
+    <!-- TRAINER PANEL (Hidden by default) -->
+
+    <div id="trainer" style="display: none;" class="bar glass-panel px-5 py-3 border-b border-dark-border flex-wrap items-center gap-3 animate-slide-down">
+
+      <div class="flex items-center gap-2 text-xs font-semibold text-brand-500 uppercase tracking-wider mr-1">
+
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+
+        <span>Trainer Panel</span>
+
+      </div>
+
+      <div class="flex flex-1 flex-wrap items-center gap-2.5 min-w-[280px]">
+
+        <input id="trainQ" placeholder="Trigger keyword (e.g. hello)" class="flex-1 min-w-[140px] bg-dark-card text-white border border-dark-border rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all placeholder:text-slate-500" />
+
+        <input id="trainA" placeholder="RayBOT response..." class="flex-[2] min-w-[180px] bg-dark-card text-white border border-dark-border rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all placeholder:text-slate-500" />
+
+        <button id="saveBtn" type="button" class="inline-flex items-center gap-1.5 bg-accent-emerald hover:bg-emerald-500 text-dark-base font-bold text-sm px-4 py-2 rounded-lg transition-all active:scale-[0.98] shadow-md shadow-accent-emeraldGlow">
+
+          <i data-lucide="plus" class="w-4 h-4"></i>
+
+          <span>Save</span>
+
+        </button>
+
+        <button id="lockBtn" type="button" class="danger inline-flex items-center gap-1.5 bg-accent-rose/10 hover:bg-accent-rose/20 text-accent-rose border border-accent-rose/30 font-semibold text-sm px-3.5 py-2 rounded-lg transition-all active:scale-[0.98]">
+
+          <i data-lucide="lock" class="w-4 h-4"></i>
+
+          <span>Lock</span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- TRAINED PAIRS INSPECTOR -->
+
+    <div id="pairs" style="display: none;" class="bg-dark-base/80 border-b border-dark-border max-h-40 overflow-y-auto px-5 py-3 text-xs divide-y divide-dark-border/40"></div>
+
+
+
+    <!-- CHAT CONTAINER -->
+
+    <div id="chat" aria-live="polite" class="flex-1 p-5 overflow-y-auto flex flex-col gap-4 scroll-smooth">
+
+      <!-- Welcome Intro Message -->
+
+      <div class="bot msg self-start max-w-[85%] md:max-w-[70%] bg-dark-surface border border-dark-border rounded-2xl rounded-tl-sm p-4 text-slate-200 shadow-md bot-glow animate-fade-in flex gap-3">
+
+        <div class="w-7 h-7 rounded-lg bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-500 shrink-0 mt-0.5">
+
+          <i data-lucide="bot" class="w-4 h-4"></i>
+
+        </div>
+
+        <div class="space-y-1">
+
+          <p class="font-medium text-sm text-brand-500">RayBOT Assistant</p>
+
+          <p class="text-sm leading-relaxed text-slate-300">Hello! I am RayBOT. Type a message below to interact, or log in as administrator to train me with custom responses.</p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- COMPOSER -->
+
+    <form id="composer" class="p-4 bg-dark-surface border-t border-dark-border flex gap-3 items-center sticky bottom-0">
+
+      <div class="relative flex-1">
+
+        <input id="input" autocomplete="off" placeholder="Type a message..." class="w-full bg-dark-base text-white border border-dark-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all placeholder:text-slate-500 pr-10" />
+
+      </div>
+
+      <button type="submit" class="bg-brand-500 hover:bg-brand-600 active:scale-95 text-white font-semibold px-5 py-3 rounded-xl transition-all shadow-md shadow-brand-glow flex items-center gap-2">
+
+        <span>Send</span>
+
+        <i data-lucide="send" class="w-4 h-4"></i>
+
+      </button>
+
+    </form>
+
+
+
+  </div>
+
+
+
+  <!-- JAVASCRIPT & LOGIC PRESERVATION -->
+
+  <script>
+
+    const ADMIN_ID = "admin";
+
+    const ADMIN_PW = "raybot";
+
+    const STORAGE_KEY = "raybot_kb";
+
+
+
+    const auth = document.getElementById("auth");
+
+    const trainer = document.getElementById("trainer");
+
+    const pairsEl = document.getElementById("pairs");
+
+    const statusEl = document.getElementById("status");
+
+    const countEl = document.getElementById("count");
+
+    const chat = document.getElementById("chat");
+
+    const input = document.getElementById("input");
+
+    const trainQ = document.getElementById("trainQ");
+
+    const trainA = document.getElementById("trainA");
+
+
+
+    const idInput = document.getElementById("idInput");
+
+    const pwInput = document.getElementById("pwInput");
+
+    const unlockBtn = document.getElementById("unlockBtn");
+
+    const saveBtn = document.getElementById("saveBtn");
+
+    const lockBtn = document.getElementById("lockBtn");
+
+    const composer = document.getElementById("composer");
+
+
+
+    let knowledge = load();
+
+
+
+    function load() {
+
+      try {
+
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+        return Array.isArray(data) ? data.filter(x => x && x.q && x.a) : [];
+
+      } catch {
+
+        return [];
+
+      }
+
+    }
+
+
+
+    function save() {
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(knowledge));
+
+      renderPairs();
+
+    }
+
+
+
+    function renderPairs() {
+
+      countEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-accent-emerald animate-pulse"></span> ${knowledge.length} pair${knowledge.length === 1 ? '' : 's'}`;
+
+      if (knowledge.length === 0) {
+
+        pairsEl.innerHTML = '<div class="text-slate-500 py-2 text-center">No trained knowledge pairs available.</div>';
+
+        return;
+
+      }
+
+      pairsEl.innerHTML = knowledge.map((pair, index) => `
+
+        <div class="pair flex justify-between items-center py-2 gap-4 hover:bg-dark-surface/40 px-2 rounded transition-colors">
+
+          <div class="truncate flex items-center gap-2">
+
+            <span class="text-slate-500 font-mono text-[10px]">#${index + 1}</span>
+
+            <b class="text-accent-emerald font-mono font-medium">${escapeHtml(pair.q)}</b> 
+
+            <span class="text-slate-500">→</span> 
+
+            <span class="text-slate-300 truncate">${escapeHtml(pair.a)}</span>
+
+          </div>
+
+          <button type="button" onclick="deletePair(${index})" class="text-slate-500 hover:text-accent-rose transition-colors p-1" title="Delete pair">
+
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+
+          </button>
+
+        </div>
+
+      `).join("");
+
+      lucide.createIcons();
+
+    }
+
+
+
+    window.deletePair = function(index) {
+
+      knowledge.splice(index, 1);
+
+      save();
+
+    };
+
+
+
+    function setStatus(msg) {
+
+      if (!msg) {
+
+        statusEl.innerText = "";
+
+        statusEl.classList.add("hidden");
+
+      } else {
+
+        statusEl.innerText = msg;
+
+        statusEl.classList.remove("hidden");
+
+      }
+
+    }
+
+
+
+    function unlock() {
+
+      if (idInput.value === ADMIN_ID && pwInput.value === ADMIN_PW) {
+
+        auth.style.display = "none";
+
+        trainer.style.display = "flex";
+
+        pairsEl.style.display = "block";
+
+        setStatus("");
+
+        idInput.value = "";
+
+        pwInput.value = "";
+
+        renderPairs();
+
+      } else {
+
+        setStatus("Invalid credentials");
+
+      }
+
+    }
+
+
+
+    function lock() {
+
+      auth.style.display = "flex";
+
+      trainer.style.display = "none";
+
+      pairsEl.style.display = "none";
+
+      setStatus("");
+
+    }
+
+
+
+    function train() {
+
+      const q = trainQ.value.trim().toLowerCase();
+
+      const a = trainA.value.trim();
+
+      if (!q || !a) return;
+
+
+
+      const existingIndex = knowledge.findIndex(item => item.q === q);
+
+      if (existingIndex >= 0) {
+
+        knowledge[existingIndex].a = a;
+
+      } else {
+
+        knowledge.push({ q, a });
+
+      }
+
+      save();
+
+      trainQ.value = "";
+
+      trainA.value = "";
+
+    }
+
+
+
+    function appendMessage(sender, text) {
+
+      const msgDiv = document.createElement("div");
+
+      const isUser = sender === "user";
+
+      
+
+      msgDiv.className = `msg ${sender} self-${isUser ? 'end' : 'start'} max-w-[85%] md:max-w-[75%] p-3.5 px-4 rounded-2xl ${
+
+        isUser 
+
+          ? 'bg-dark-card border border-accent-emerald/30 text-accent-emerald rounded-tr-sm user-glow' 
+
+          : 'bg-dark-surface border border-dark-border text-slate-200 rounded-tl-sm bot-glow'
+
+      } shadow-md animate-fade-in flex gap-3`;
+
+
+
+      if (isUser) {
+
+        msgDiv.innerHTML = `
+
+          <div class="space-y-1 w-full text-right">
+
+            <p class="font-medium text-xs text-accent-emerald/80 uppercase tracking-wider">You</p>
+
+            <div class="text-sm leading-relaxed text-slate-100 whitespace-pre-wrap">${escapeHtml(text)}</div>
+
+          </div>
+
+          <div class="w-7 h-7 rounded-lg bg-accent-emerald/10 border border-accent-emerald/20 flex items-center justify-center text-accent-emerald shrink-0 mt-0.5">
+
+            <i data-lucide="user" class="w-4 h-4"></i>
+
+          </div>
+
+        `;
+
+      } else {
+
+        msgDiv.innerHTML = `
+
+          <div class="w-7 h-7 rounded-lg bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-500 shrink-0 mt-0.5">
+
+            <i data-lucide="bot" class="w-4 h-4"></i>
+
+          </div>
+
+          <div class="space-y-1">
+
+            <p class="font-medium text-xs text-brand-500 uppercase tracking-wider">RayBOT</p>
+
+            <div class="text-sm leading-relaxed text-slate-200 whitespace-pre-wrap">${escapeHtml(text)}</div>
+
+          </div>
+
+        `;
+
+      }
+
+
+
+      chat.appendChild(msgDiv);
+
+      chat.scrollTop = chat.scrollHeight;
+
+      lucide.createIcons();
+
+    }
+
+
+
+    function respond(userText) {
+
+      const clean = userText.trim().toLowerCase();
+
+      const match = knowledge.find(item => clean.includes(item.q));
+
+      
+
+      setTimeout(() => {
+
+        if (match) {
+
+          appendMessage("bot", match.a);
+
+        } else {
+
+          appendMessage("bot", "I haven't been trained for that query yet. Log in as admin above to add responses!");
+
+        }
+
+      }, 250);
+
+    }
+
+
+
+    function escapeHtml(str) {
+
+      return str.replace(/[&<>"']/g, function(m) {
+
+        return {
+
+          '&': '&amp;',
+
+          '<': '&lt;',
+
+          '>': '&gt;',
+
+          '"': '&quot;',
+
+          "'": '&#039;'
+
+        }[m];
+
+      });
+
+    }
+
+
+
+    // Event Listeners
+
+    unlockBtn.addEventListener("click", unlock);
+
+    pwInput.addEventListener("keypress", (e) => { if (e.key === "Enter") unlock(); });
+
+    lockBtn.addEventListener("click", lock);
+
+    saveBtn.addEventListener("click", train);
+
+    trainA.addEventListener("keypress", (e) => { if (e.key === "Enter") train(); });
+
+
+
+    composer.addEventListener("submit", (e) => {
+
+      e.preventDefault();
+
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      appendMessage("user", text);
+
+      input.value = "";
+
+      respond(text);
+
+    });
+
+
+
+    // Initialize UI icons
+
+    window.addEventListener("DOMContentLoaded", () => {
+
+      lucide.createIcons();
+
+      renderPairs();
+
+    });
+
+  </script>
+
+</body>
+
+</html>
